@@ -9,75 +9,58 @@
 <body class="bg-light">
 
 <div class="container my-5">
-  <h1 class="text-center mb-4">Task Management System</h1>
-
-  <!-- Success or conflict messages -->
-  <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
-  <div th:if="${conflictMessage}" class="alert alert-danger" th:text="${conflictMessage}"></div>
+  <h2 class="text-center mb-4">Task Management</h2>
 
   <!-- Task Form -->
-  <div class="card p-4 shadow-sm mb-4">
-    <form action="/addTask" method="post" th:object="${task}">
-      <!-- Task Name Field -->
-      <div class="mb-3">
-        <label for="taskName" class="form-label">Task Name</label>
-        <input type="text" id="taskName" th:field="*{taskName}" class="form-control" placeholder="Enter task name" required>
-        <div class="text-danger" th:if="${#fields.hasErrors('taskName')}" th:errors="*{taskName}"></div>
-      </div>
+  <form action="/addTask" method="post" class="mb-4">
+    <div class="mb-3">
+      <label for="taskName" class="form-label">Task Name</label>
+      <input type="text" id="taskName" name="taskName" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label for="priority" class="form-label">Priority</label>
+      <select id="priority" name="priority" class="form-select" required>
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="dueDate" class="form-label">Due Date</label>
+      <input type="date" id="dueDate" name="dueDate" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Check Availability</button>
+  </form>
 
-      <!-- Priority Level Dropdown -->
-      <div class="mb-3">
-        <label for="priority" class="form-label">Priority</label>
-        <select id="priority" th:field="*{priority}" class="form-control" required>
-          <option value="">Select priority</option>
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
-        <div class="text-danger" th:if="${#fields.hasErrors('priority')}" th:errors="*{priority}"></div>
-      </div>
+  <!-- Display Conflict or Success Messages -->
+  <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+  <div class="alert alert-success" th:if="${noConflictMessage}" th:text="${noConflictMessage}"></div>
+  <div class="alert alert-danger" th:if="${conflictMessage}" th:text="${conflictMessage}"></div>
 
-      <!-- Due Date Field -->
-      <div class="mb-3">
-        <label for="dueDate" class="form-label">Due Date</label>
-        <input type="date" id="dueDate" th:field="*{dueDate}" class="form-control" required>
-        <div class="text-danger" th:if="${#fields.hasErrors('dueDate')}" th:errors="*{dueDate}"></div>
-      </div>
-
-      <button type="submit" class="btn btn-primary w-100">Add Task</button>
-    </form>
-  </div>
+  <!-- Display Save Button if no Conflicts -->
+  <form action="/saveTask" method="post">
+    <button type="submit" class="btn btn-success">Save Task</button>
+  </form>
 
   <!-- Task Table -->
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <h5 class="card-title">Task List</h5>
-
-      <div th:if="${#lists.isEmpty(tasks)}" class="alert alert-info">
-        No tasks available.
-      </div>
-
-      <table th:if="${!#lists.isEmpty(tasks)}" class="table table-striped">
-        <thead>
-        <tr>
-          <th>Task</th>
-          <th>Priority</th>
-          <th>Due Date</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="task : ${tasks}">
-          <td th:text="${task.taskName}">Task Name</td>
-          <td th:text="${task.priority}">Priority</td>
-          <td th:text="${task.dueDate}">Due Date</td>
-        </tr>
-        </tbody>
-      </table>
-
-      <div th:if="${!#lists.isEmpty(tasks) && noConflicts}" class="alert alert-success mt-3">
-        Looks like you are free!
-      </div>
-    </div>
+  <div th:if="${tasks}">
+    <h3 class="mt-5">Tasks</h3>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Task Name</th>
+        <th>Priority</th>
+        <th>Due Date</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="task : ${tasks}">
+        <td th:text="${task.taskName}"></td>
+        <td th:text="${task.priority}"></td>
+        <td th:text="${task.dueDate}"></td>
+      </tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
@@ -90,3 +73,4 @@
 </script>
 </body>
 </html>
+
